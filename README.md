@@ -1,28 +1,68 @@
-# 🔐 JBoss Elytron Credential Store – 복호화 개념 및 한 줄 CLI 구성
+# 🔐 JBoss Elytron Credential Store – CLI 구성 및 설명
 
-이 문서는 JBoss EAP 7.x / WildFly에서 **Elytron Credential Store**를 활용하여  
-비밀번호를 평문으로 남기지 않고, **런타임 시 내부적으로 복호화하여 사용하는 구조**를 설명하며,  
-사용자가 `jboss-cli.sh`에서 쉽게 사용할 수 있도록 **모든 명령을 한 줄로 정리**합니다.
+이 문서는 JBoss EAP / WildFly 환경에서 **Elytron Credential Store**를 구성하기 위한 CLI 명령을 제공하고**, 각 명령어의 **설명과 역할**을 함께 정리합니다.
 
 ---
 
-## ✅ 주요 CLI 명령
+## ✅ CLI 명령 + 상세 설명
+
+### 1. Credential Store 생성
 
 ```bash
 /subsystem=elytron/credential-store=cs:add(path=cs.ks, relative-to=jboss.server.config.dir, credential-reference={clear-text="StorePassword"}, create=true)
-
-/subsystem=elytron/credential-store=cs:add-alias(alias=dbtest-password, secret-value=dbtest)
-
-/subsystem=elytron/credential-store=cs:read-aliases()
-
-/subsystem=datasources/data-source=postgres:undefine-attribute(name=security-domain)
-
-/subsystem=datasources/data-source=postgres:write-attribute(name=credential-reference, value={store="cs", alias="dbtest-password"})
 ```
+
+- **path=cs.ks**: 저장될 credential store 파일명
+- **relative-to=jboss.server.config.dir**: 상대 경로 (기본은 `$JBOSS_HOME/standalone/configuration`)
+- **credential-reference**: Store 자체를 여는 암호 (이게 없으면 cs.ks 못 엶)
+- **create=true**: 파일이 없으면 새로 생성
 
 ---
 
-## 📄 datasource XML 설정 예시
+### 2. alias 등록 (비밀번호 저장)
+
+```bash
+/subsystem=elytron/credential-store=cs:add-alias(alias=dbtest-password, secret-value=dbtest)
+```
+
+- **alias**: 나중에 datasource에서 참조할 이름
+- **secret-value**: 실제 DB 접속 비밀번호 (입력 시 암호화되어 저장됨)
+
+---
+
+### 3. alias 목록 확인
+
+```bash
+/subsystem=elytron/credential-store=cs:read-aliases()
+```
+
+- 등록된 모든 alias 이름만 보여줌
+- 비밀번호(값)는 절대 출력되지 않음
+
+---
+
+### 4. 기존 datasource에서 security-domain 제거
+
+```bash
+/subsystem=datasources/data-source=postgres:undefine-attribute(name=security-domain)
+```
+
+- 기존 PicketBox 방식의 security-domain 사용 중이면 제거 필요
+
+---
+
+### 5. datasource에 credential-reference 적용
+
+```bash
+/subsystem=datasources/data-source=postgres:write-attribute(name=credential-reference, value={store="cs", alias="dbtest-password"})
+```
+
+- 저장된 alias를 통해 비밀번호를 참조하도록 설정
+- `store="cs"`는 cs.ks 파일, `alias`는 앞서 등록한 키
+
+---
+
+## 📄 XML 구성 예시
 
 ```xml
 <security>
@@ -33,15 +73,7 @@
 
 ---
 
-## 📁 KeyStore 파일 위치 확인
-
-```bash
-ls -l $JBOSS_HOME/standalone/configuration/cs.ks
-```
-
----
-
-## 🧾 구성 완료 후 반영
+## 🔄 적용 마무리
 
 ```bash
 :reload
@@ -49,28 +81,19 @@ ls -l $JBOSS_HOME/standalone/configuration/cs.ks
 
 ---
 
-## ❌ 복호화는 가능한가?
+## 🛡️ 운영 팁
 
-| 항목 | 가능 여부 | 설명 |
-|------|------------|------|
-| alias 목록 확인 | ✅ | `read-aliases()` |
-| alias 값 확인 (복호화) | ❌ | 평문은 절대 확인 불가 |
-| 외부 도구(keytool 등)로 복호화 | ❌ | JCEKS 내부 구조 특성상 불가능 |
+- alias는 내부에서만 복호화됨 → 평문 확인은 절대 불가
+- cs.ks 또는 StorePassword 유실 시 alias 무용지물
+- 반드시 CLI 등록 명령어 또는 평문 비밀번호 따로 백업
 
 ---
 
-## 🛡️ 필수 주의 사항
-
-- `secret-value`는 반드시 등록 시점에 알고 있어야 함
-- alias만 저장되어 있어도 평문 모르면 복구 불가
-- `cs.ks` 분실 시 모든 alias 내용도 유실됨
-- 반드시 평문 또는 CLI 등록 스크립트 별도 백업 필요
-
----
-
-## ✍️ 추천 백업 CLI 템플릿
+## 📦 백업 CLI 예시
 
 ```bash
 /subsystem=elytron/credential-store=cs:add-alias(alias=dbtest-password, secret-value=dbtest)
 /subsystem=elytron/credential-store=cs:add-alias(alias=backup-user, secret-value=securePwd2025)
 ```
+
+> 🔐 이 파일을 Git 또는 보안 저장소에 함께 보관하세요.
