@@ -1,6 +1,6 @@
 # 🔐 JBoss Elytron Credential Store – CLI 구성 및 설명
 
-이 문서는 JBoss EAP / WildFly 환경에서 **Elytron Credential Store**를 구성하기 위한 CLI 명령을 제공하고**, 각 명령어의 **설명과 역할**을 함께 정리합니다.
+이 문서는 JBoss EAP / WildFly 환경에서 **Elytron Credential Store**를 구성하기 위한 CLI 명령을 제공하고, 각 명령어의 **설명과 역할**을 함께 정리합니다.
 
 ---
 
