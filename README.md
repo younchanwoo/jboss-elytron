@@ -94,4 +94,4 @@
 ```bash
 /subsystem=elytron/credential-store=cs:add-alias(alias=dbtest-password, secret-value=dbtest)
 /subsystem=elytron/credential-store=cs:add-alias(alias=backup-user, secret-value=securePwd2025)
-``
+```
