@@ -6,7 +6,7 @@
 
 ---
 
-## ✅ 주요 CLI 명령 (한 줄 버전)
+## ✅ 주요 CLI 명령
 
 ```bash
 /subsystem=elytron/credential-store=cs:add(path=cs.ks, relative-to=jboss.server.config.dir, credential-reference={clear-text="StorePassword"}, create=true)
