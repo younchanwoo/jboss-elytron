@@ -59,7 +59,7 @@ ls -l $JBOSS_HOME/standalone/configuration/cs.ks
 
 ---
 
-## 🛡️ 운영자 필수 주의 사항
+## 🛡️ 필수 주의 사항
 
 - `secret-value`는 반드시 등록 시점에 알고 있어야 함
 - alias만 저장되어 있어도 평문 모르면 복구 불가
