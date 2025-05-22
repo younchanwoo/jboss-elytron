@@ -1,10 +1,10 @@
-# 🔐 JBoss Elytron Credential Store – CLI 구성 및 설명
+# JBoss Elytron Credential Store – CLI 구성 및 설명
 
 이 문서는 JBoss EAP / WildFly 환경에서 **Elytron Credential Store**를 구성하기 위한 CLI 명령을 제공하고, 각 명령어의 **설명과 역할**을 함께 정리합니다.
 
 ---
 
-## ✅ CLI 명령 + 상세 설명
+## CLI 명령 + 상세 설명
 
 ### 1. Credential Store 생성
 
@@ -62,7 +62,7 @@
 
 ---
 
-## 📄 XML 구성 예시
+## XML 구성 예시
 
 ```xml
 <security>
@@ -73,7 +73,7 @@
 
 ---
 
-## 🔄 적용 마무리
+## 적용 마무리
 
 ```bash
 :reload
@@ -81,7 +81,7 @@
 
 ---
 
-## 🛡️ 운영 팁
+## 운영 팁
 
 - alias는 내부에서만 복호화됨 → 평문 확인은 절대 불가
 - cs.ks 또는 StorePassword 유실 시 alias 무용지물
@@ -89,11 +89,9 @@
 
 ---
 
-## 📦 백업 CLI 예시
+## 백업 CLI 예시
 
 ```bash
 /subsystem=elytron/credential-store=cs:add-alias(alias=dbtest-password, secret-value=dbtest)
 /subsystem=elytron/credential-store=cs:add-alias(alias=backup-user, secret-value=securePwd2025)
-```
-
-> 🔐 이 파일을 Git 또는 보안 저장소에 함께 보관하세요.
+``
